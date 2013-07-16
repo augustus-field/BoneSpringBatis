@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="boneOp">
+	<!-- Create t_bone table -->
+	<statement id="createBone"  > 
+	    create table t_bone (id int primary key, 
+	    	name varchar(32),
+	    	age int,
+	    	address varchar(32),
+	    	phone varchar(32),
+	    	info varchar(64),
+	    	flag TINYINT 
+	     )
+	</statement>
+	
+	<!-- Check if a table exists -->
+	<select id="checkIfExists" resultClass="int" parameterClass="String">
+		select count(*) 
+		  from INFORMATION_SCHEMA.TABLES
+		 where table_name=#tableName#
+	</select>
+	
+	<resultMap class="bone" id="bone">
+		<result property="id"  />
+		<result property="name"  />
+		<result property="address"  />
+		<result property="phone"  />
+		<result property="info"  />
+	</resultMap>
+	
+	<select id="getNumberOfEntries"  parameterClass="String" resultClass="int" >
+		select count(*) from $tableName$ 
+	</select>
+	
+	<insert id="addBone" parameterClass="hashMap">
+		insert into t_bone (id, name, age, address, phone, info) values
+			(#id#, #name#, #age#, #address#, #phone#, #info#)
+	</insert>
+	
+	<select id="getAllEntries" parameterClass="String" resultMap="bone">
+		select id, name, age, address, phone, info from $tableName$
+	</select>
+	
+	<update id="updateBone" parameterClass="hashMap">
+		update t_bone set flag = #flag#
+			<isNotEmpty property="name" prepend=",">#name#</isNotEmpty>
+			<isNotEmpty property="address" prepend=",">#address#</isNotEmpty>
+			<isNotEmpty property="info" prepend=",">#info#</isNotEmpty>
+			<isNotEmpty property="age" prepend=",">#age#</isNotEmpty>
+			<isNotEmpty property="phone" prepend=",">#phone#</isNotEmpty>
+		<isNotEmpty property="id">where id=#id#</isNotEmpty>
+	</update>
+</sqlMap>
